@@ -43,7 +43,9 @@ TBD
 
 ## Sources
 
-1. Bodnar, C., Bruinsma, W. P., Lucic, A., Stanley, M., Vaughan, A., Brandstetter, J., Garvan, P., Riechert, M., Weyn, J. A., Dong, H., Gupta, J. K., Thambiratnam, K., Archibald, A. T., Wu, C.-C., Heider, E., Welling, M., Turner, R. E., & Perdikaris, P. (2024). *A Foundation Model for the Earth System*. arXiv:2405.13063. [https://arxiv.org/abs/2405.13063](https://arxiv.org/abs/2405.13063)
-2. Abramson, J., Adler, J., Dunger, J., Evans, R., Green, T., Pritzel, A., Ronneberger, O., Willmore, L., Ballard, A. J., Bambrick, J., Bodenstein, S. W., Evans, D. A., Hung, C.-C., O’Neill, M., Reiman, D., Tunyasuvunakool, K., Wu, Z., Žemgulytė, A., Arvaniti, E., ... Jumper, J. M. (2024). *Accurate structure prediction of biomolecular interactions with AlphaFold 3*. Nature, 630, 493–500. [https://www.nature.com/articles/s41586-024-07487-w](https://www.nature.com/articles/s41586-024-)
-2. Liu, L., Yu, S., Wang, R., Ma, Z., & Shen, Y. (2024). *How Can Large Language Models Understand Spatial-Temporal Data?* arXiv:2401.14192. [https://arxiv.org/abs/2401.14192](https://arxiv.org/abs/2401.14192)
-3. Ali, K., Bettouche, Z., Kassler, A., & Fischer, A. (2025). *Enhancing Spatiotemporal Networks with xLSTM: A Scalar LSTM Approach for Cellular Traffic Forecasting*. arXiv:2507.19513. [https://arxiv.org/abs/2507.19513](https://arxiv.org/abs/2507.19513)
+## Sources
+
+1. <a name="source-1"></a> Bodnar, C., ... Perdikaris, P. (2024). *A Foundation Model for the Earth System*. arXiv:2405.13063. [https://arxiv.org/abs/2405.13063](https://arxiv.org/abs/2405.13063)
+2. <a name="source-2"></a> Abramson, J., ... Jumper, J. M. (2024). *Accurate structure prediction of biomolecular interactions with AlphaFold 3*. Nature, 630, 493–500. [https://www.nature.com/articles/s41586-024-07487-w](https://www.nature.com/articles/s41586-024-07487-w)
+3. <a name="source-3"></a> Liu, L., ... Shen, Y. (2024). *How Can Large Language Models Understand Spatial-Temporal Data?* arXiv:2401.14192. [https://arxiv.org/abs/2401.14192](https://arxiv.org/abs/2401.14192)
+4. <a name="source-4"></a> Ali, K., ... Fischer, A. (2025). *Enhancing Spatiotemporal Networks with xLSTM: A Scalar LSTM Approach for Cellular Traffic Forecasting*. arXiv:2507.19513. [https://arxiv.org/abs/2507.19513](https://arxiv.org/abs/2507.19513)
