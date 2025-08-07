@@ -2,10 +2,12 @@
 
 The goal of Project MoirAI is to find and design reliable models suitable for processing a large number of different feature categories, most prominently spatio-temporal-linguistic data.
 
+<img src="./images/ui-overview.png">
+
 ## Quickstart
 
 1. Clone this repository `git clone https://github.com/project-moirai/crime-prediction.git`
-2. Switch directory to `/app` and open `index.html` in a browser. Ensure you can navigate through the map and set filters.
+2. Switch to the cloned directory and open `index.html` in a browser. Ensure you can navigate through the map and set filters.
 3. Switch directory to `/experiments` and open file `train.py` in an editor. Make sure you have Python installed and run `pip install -r requirements.txt`
 4. TBD
 
