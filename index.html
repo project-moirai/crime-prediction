@@ -967,7 +967,7 @@
         </div>
 
         <div class="legend" style="top:10px;right:10px;height:45px;cursor:pointer" onclick="toggleTheme()">
-            ☀️🌙
+            <img src="images/theme-icon.svg" alt="Theme icon" width="26" height="26">
         </div>
 
         <!-- Overlay for mobile -->
@@ -1057,40 +1057,6 @@
         crossorigin="" />
 
     <script>
-        /*
-        Performance Optimizations Implemented:
-        
-        1. Debounce/Throttle Updates:
-           - Throttled updates every 16ms (60fps) for smooth performance
-           - Separate throttled functions for different operations
-           - RequestAnimationFrame for visual updates
-        
-        2. Separate Visual from Data Updates:
-           - Lightweight visual updates (histogram bins) happen immediately
-           - Heavy operations (month chart, hexagon grid) are debounced
-           - Visual updates use requestAnimationFrame for smooth rendering
-        
-        3. Cache and Reuse DOM Elements:
-           - Pre-cached DOM elements to avoid repeated queries
-           - Reusable month bar and bar chart elements
-           - Avoid innerHTML operations during updates
-        
-        4. Optimize Data Processing:
-           - Pre-calculated time buckets, category lookup, and month lookup tables
-           - Use Set operations for faster filtering
-           - Index-based filtering instead of array iterations
-        
-        5. Reduce Update Scope:
-           - Only update histogram bins during drag (fast)
-           - Update month chart and hexagon grid only on drag end (slow)
-           - Separate update functions for different UI components
-        
-        6. Virtual Rendering:
-           - Only render hexagons within visible map bounds
-           - Culling of off-screen hexagons for better performance
-           - Batched DOM operations where possible
-        */
-
         let map;
         let layer = null;
         let hexagonSize = 15; // km
@@ -1098,7 +1064,7 @@
         let crimeData = [];
         let filteredData = [];
         let allCategories = new Set();
-        let selectedMonths = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']); // All months selected by default
+        let selectedMonths = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
         let monthStats = {};
         let allMonthSelected = true;
         let histogramSlider;
@@ -1420,7 +1386,7 @@
                 authType: "anonymous",
                 clientId: "b2ce4a67-bc32-4586-b043-6514418973f1",
                 getToken: function (resolve, reject, map) {
-                    var tokenServiceUrl = "https://azure-maps-authentication.azurewebsites.net/api/get_token";
+                    var tokenServiceUrl = "https://azure-maps-auth.azurewebsites.net/token";
                     fetch(tokenServiceUrl).then(r => r.text()).then(token => resolve(token));
                 }
             };

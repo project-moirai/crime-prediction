@@ -8,8 +8,10 @@ The goal of Project MoirAI is to find and design reliable models suitable for pr
 
 1. Clone this repository `git clone https://github.com/project-moirai/crime-prediction.git`
 2. Switch to the cloned directory and open `index.html` in a browser. Ensure you can navigate through the map and set filters.
-3. Switch directory to `/experiments` and open file `train.py` in an editor. Make sure you have Python installed and run `pip install -r requirements.txt`
-4. TBD
+3. Switch directory to `/experiments` and open file `train.py` in an editor, take a look at what is happening in the training script.
+4. Make sure you have Python installed and run `pip install -r requirements.txt`
+5. Run `python v-xgboost/train.py` to train the models.
+6. Run e.g. `python v-xgboost/predict.py 12-01 12:00 46 5.5` to get a prediction, if and which crime might happen at a certain time and location.
 
 ## Data format
 
@@ -24,7 +26,7 @@ The goal of Project MoirAI is to find and design reliable models suitable for pr
 | lat        | Latitude coordinate of the event            | 49.3791                              |
 | lng        | Longitude coordinate of the event           | 8.0783                               |
 
-Categories can be at maximum two of the following:
+Categories can be at maximum two of the following (24 in total):
 
 ```
 ["alcohol-related-incident", "animal-incident", "arson", "assault", "criminal-damage", "cybercrime", "domestic-violence", "drug-offense", "environmental-offense", "fraud", "gun-offense", "human-trafficking", "intrusion", "murder", "mountain-accident", "other", "public-disturbance", "robbery", "search-and-rescue", "sexual-assault", "suicide", "traffic-accident", "theft", "vandalism"]
@@ -37,15 +39,6 @@ Data for each country was collected from the following sources:
 | at         | www.polizei.gv.at/{county}/presse |
 | de         | www.presseportal.de               |
 
-## Model architecture
+## Methodologies & models
 
-TBD
-
-## Sources
-
-## Sources
-
-1. <a name="source-1"></a> Bodnar, C., ... Perdikaris, P. (2024). *A Foundation Model for the Earth System*. arXiv:2405.13063. [https://arxiv.org/abs/2405.13063](https://arxiv.org/abs/2405.13063)
-2. <a name="source-2"></a> Abramson, J., ... Jumper, J. M. (2024). *Accurate structure prediction of biomolecular interactions with AlphaFold 3*. Nature, 630, 493–500. [https://www.nature.com/articles/s41586-024-07487-w](https://www.nature.com/articles/s41586-024-07487-w)
-3. <a name="source-3"></a> Liu, L., ... Shen, Y. (2024). *How Can Large Language Models Understand Spatial-Temporal Data?* arXiv:2401.14192. [https://arxiv.org/abs/2401.14192](https://arxiv.org/abs/2401.14192)
-4. <a name="source-4"></a> Ali, K., ... Fischer, A. (2025). *Enhancing Spatiotemporal Networks with xLSTM: A Scalar LSTM Approach for Cellular Traffic Forecasting*. arXiv:2507.19513. [https://arxiv.org/abs/2507.19513](https://arxiv.org/abs/2507.19513)
+The most promising models and methodologies used will be described here in more detail after the hackathon.
