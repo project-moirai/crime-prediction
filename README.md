@@ -8,11 +8,12 @@ The goal of Project MoirAI is to find and design reliable models suitable for pr
 
 1. Clone this repository `git clone https://github.com/project-moirai/crime-prediction.git`.
 2. Switch to the cloned directory and open `index.html` in a browser. Ensure you can navigate through the map and set filters.
-3. Switch directory to `/experiments` and open file `train.py` in an editor, take a look at what is happening in the training script.
-4. Make sure you have Python installed, create a new virtual environment `python -m venv .venv` and activate it (Linux: `source .venv/bin/activate`).
-5. Install dependencies with `pip install -r v-xgboost/requirements.txt`.
-6. Run `python v-xgboost/train.py` to train the model.
-7. Run e.g. `python v-xgboost/predict.py 12-01 12:00 46 5.5` to get a prediction, if and which crime might happen at a certain time and location.
+3. Take a look at the data in `data/data-gpt4o-v2.jsonl`. It contains over 37,000 police incidents collected over the course of a year.
+4. Switch directory to `/experiments` and open file `train.py` in an editor, take a look at what is happening in the training script.
+5. Make sure you have Python installed, create a new virtual environment `python -m venv .venv` and activate it (Linux: `source .venv/bin/activate`).
+6. Install dependencies with `pip install -r v-xgboost/requirements.txt`.
+7. Run `python v-xgboost/train.py` to train the model.
+8. Run e.g. `python v-xgboost/predict.py 12-01 12:00 46 5.5` to get a prediction, if and which crime might happen at a certain time and location.
 
 ## Data format
 
