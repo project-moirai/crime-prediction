@@ -11,7 +11,7 @@ The goal of Project MoirAI is to find and design reliable models suitable for pr
 3. Switch directory to `/experiments` and open file `train.py` in an editor, take a look at what is happening in the training script.
 4. Make sure you have Python installed, create a new virtual environment `python -m venv .venv` and activate it (Linux: `source .venv/bin/activate`).
 5. Install dependencies with `pip install -r v-xgboost/requirements.txt`.
-6. Run `python v-xgboost/train.py` to train the models.
+6. Run `python v-xgboost/train.py` to train the model.
 7. Run e.g. `python v-xgboost/predict.py 12-01 12:00 46 5.5` to get a prediction, if and which crime might happen at a certain time and location.
 
 ## Data format
