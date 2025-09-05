@@ -88,7 +88,7 @@ all_categories = df_filtered["category"].unique().tolist() + ["no-incident"]
 le = LabelEncoder()
 le.fit(all_categories)
 
-print("Category distribution ----------------------")
+print("Category distribution --------------------------")
 print(df_filtered["category"].value_counts().sort_values())
 
 y = le.transform(df_filtered["category"])
@@ -127,9 +127,9 @@ X_new = pd.DataFrame(
     }
 )
 
-print("X ----------------------")
+print("X --------------------------------------------")
 print(X.describe())
-print("X with no-incident feature ----------------------")
+print("X with no-incident feature -------------------")
 print(X_new.describe())
 
 y_new = np.full(num_rows, le.transform(["no-incident"])[0], dtype=int)
@@ -146,9 +146,9 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_aug, y_aug, test_size=0.2, random_state=123
 )
 
-print("Training features head ----------------------")
+print("Training features head ------------------------")
 print(X_train.head())
-print("Classes head ----------------------")
+print("Classes head ----------------------------------")
 print(y_train[:5])
 
 # Check how often labels appear now
@@ -161,6 +161,7 @@ label_dist = pd.DataFrame(
         "count": label_dist_encoded.values,
     }
 )
+print("Category distribution after oversampling ------")
 print(label_dist)
 
 # Train the classification model to predict categories
