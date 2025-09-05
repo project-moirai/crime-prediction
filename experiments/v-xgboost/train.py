@@ -84,20 +84,30 @@ features = [
 ]
 X = df_filtered[features]
 
-# The category is encoded as numbers and used as the target (y)
-label_counts = df_filtered["category"].explode().value_counts()
-print(label_counts)
+all_categories = df_filtered["category"].unique().tolist() + ["no-incident"]
 le = LabelEncoder()
-y = le.fit_transform(df_filtered["category"])
+le.fit(all_categories)
+
+print("Category distribution --------------------------")
+print(df_filtered["category"].value_counts().sort_values())
+
+y = le.transform(df_filtered["category"])
+
+# Oversample with SMOTE so we have a more balanced dataset
+sm = SMOTE(random_state=123)
+X_SMOTE, y_SMOTE = sm.fit_resample(X, y)
+
+_, label_counts = np.unique(y_SMOTE, return_counts=True)
 
 # We now introduce some random data at random dates, times and locations
 # where no incident happened and give them the label "no-incident"
-num_rows = df.shape[0] // 100
+# The category is encoded as numbers and used as the target (y)
+num_rows = label_counts[0]
 rng = np.random.default_rng(seed=123)
-dates = pd.to_datetime(
-    rng.integers(0, 365, num_rows), unit="D", origin=pd.Timestamp("2021-01-01")
-)
+days = rng.integers(0, 365, num_rows).astype("timedelta64[D]")
+hours = rng.integers(0, 24, num_rows).astype("timedelta64[h]")
 
+dates = pd.to_datetime(days + hours + np.datetime64("2021-01-01"))
 dates = pd.Series(dates)
 
 hours = dates.dt.hour
@@ -117,10 +127,15 @@ X_new = pd.DataFrame(
     }
 )
 
-le.classes_ = np.append(le.classes_, "no-incident")
+print("X --------------------------------------------")
+print(X.describe())
+print("X with no-incident feature -------------------")
+print(X_new.describe())
+
 y_new = np.full(num_rows, le.transform(["no-incident"])[0], dtype=int)
-X_aug = pd.concat([X, X_new], ignore_index=True)
-y_aug = np.concatenate([y, y_new])
+
+X_aug = pd.concat([X_SMOTE, X_new], ignore_index=True)
+y_aug = np.concatenate([y_SMOTE, y_new])
 
 # Save the label encoder to be used in predict.py
 with open("label_encoder.pkl", "wb") as f:
@@ -131,16 +146,13 @@ X_train, X_test, y_train, y_test = train_test_split(
     X_aug, y_aug, test_size=0.2, random_state=123
 )
 
-# Oversample with SMOTE so we have a more balanced dataset
-sm = SMOTE(random_state=123)
-X_SMOTE, y_SMOTE = sm.fit_resample(X_train, y_train)
-
-print("Training samples head ----------------------")
-print(X_SMOTE.head())
-print(y_SMOTE[:5])
+print("Training features head ------------------------")
+print(X_train.head())
+print("Classes head ----------------------------------")
+print(y_train[:5])
 
 # Check how often labels appear now
-label_dist_encoded = pd.Series(y_SMOTE).value_counts().sort_index()
+label_dist_encoded = pd.Series(y_train).value_counts().sort_index()
 label_names = le.inverse_transform(label_dist_encoded.index)
 label_dist = pd.DataFrame(
     {
@@ -149,11 +161,12 @@ label_dist = pd.DataFrame(
         "count": label_dist_encoded.values,
     }
 )
+print("Category distribution after oversampling ------")
 print(label_dist)
 
 # Train the classification model to predict categories
-model_category = xgb.XGBClassifier(eval_metric="mlogloss")
-model_category.fit(X_SMOTE, y_SMOTE, eval_set=[(X_test, y_test)], verbose=True)
+model_category = xgb.XGBClassifier(eval_metric="mlogloss", n_estimators=120)
+model_category.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=True)
 
 feature_important = model_category.get_booster().get_score(importance_type="weight")
 keys = list(feature_important.keys())

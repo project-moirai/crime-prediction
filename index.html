@@ -977,7 +977,7 @@
             <h1 class="title">Project MoirAI · Crime Map</h1>
             <div class="section">
                 <div class="filter-section" onClick="selectDeselectMonth()">
-                    <h3>Month Filter</h3>
+                    <h3 style="cursor:pointer;">Month Filter</h3>
                     <div id="monthChart" class="month-chart">
                     </div>
                 </div>
@@ -1016,11 +1016,11 @@
 
                 <div class="filter-section">
                     <h3>Information</h3>
-                    <div class="info-item">Total events: <span id="totalEvents">0</span></div>
-                    <div class="info-item">Shown events: <span id="filteredEvents">0</span></div>
+                    <div class="info-item">Total incidents: <span id="totalEvents">0</span></div>
+                    <div class="info-item">Shown incidents: <span id="filteredEvents">0</span></div>
 
                     <div id="hexagonDetails" style="display: none;">
-                        <div class="info-item">Selected events: <span id="hexTotalEvents">0</span></div>
+                        <div class="info-item">Selected incidents: <span id="hexTotalEvents">0</span></div>
 
                         <div class="bar-chart-container" id="barChartContainer">
                             <div id="barChart">
@@ -1298,13 +1298,13 @@
         ]);
 
         const labels = [
-            "1 event",
-            "2-3 events",
-            "4-10 events",
-            "11-25 events",
-            "26-49 events",
-            "50-99 events",
-            "100+ events"
+            "1 incident",
+            "2-3 incidents",
+            "4-10 incidents",
+            "11-25 incidents",
+            "26-49 incidents",
+            "50-99 incidents",
+            "100+ incidents"
         ];
 
         const legendContainer = document.getElementById("intensityLegendContent");
