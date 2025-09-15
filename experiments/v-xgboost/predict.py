@@ -6,10 +6,20 @@ import numpy as np
 import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 
+import os
+import pickle
+import argparse
+import pandas as pd
+import numpy as np
+import xgboost as xgb
+from sklearn.preprocessing import LabelEncoder
+
+from llm_helper import generate_message
+
 
 def raise_file_missing_exception(filepath: str):
     raise Exception(
-        f"File {label_path} was not found. Did you run train.py? Also ensure the file is in the correct location, working directory is {os.getcwd()}"
+        f"File {filepath} was not found. Did you run train.py? Also ensure the file is in the correct location, working directory is {os.getcwd()}"
     )
 
 
@@ -76,6 +86,29 @@ features = [
 
 pred_category = model_category.predict(df[features])
 
-print(
-    f"Predicted incident to happen at {date_input} {time_input} (lat: {latitude}, lng: {longitude}): {le.inverse_transform(pred_category)[0]}",
-)
+pred_label = le.inverse_transform(pred_category)[0]
+output_msg = f"Predicted incident to happen at {date_input} {time_input} (lat: {latitude}, lng: {longitude}): {pred_label}"
+
+# Generate human-friendly message
+try:
+    prob = None
+    if hasattr(model_category, "predict_proba"):
+        try:
+            prob = float(model_category.predict_proba(df[features])[0].max())
+        except Exception:
+            prob = None
+
+    llm_text = generate_message(
+        prediction_label=pred_label,
+        probability=prob,
+        lat=float(latitude),
+        lng=float(longitude),
+        datetime_str=f"{date_input} {time_input}",
+        max_tokens=256,
+        temperature=0.2,
+    )
+
+    print("\n--- LLM Summary ---")
+    print(llm_text)
+except Exception as e:
+    print(f"LLM helper error: {e}")
