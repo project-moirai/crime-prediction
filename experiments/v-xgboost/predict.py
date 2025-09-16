@@ -8,6 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 import argparse
 
 from llm_helper import generate_message
+from predictarea import XGBoostPredictionModel
 
 
 def predict(date_input: str, time_input: str, latitude: float, longitude: float, model_dir: str = "."):
@@ -108,6 +109,78 @@ def predict(date_input: str, time_input: str, latitude: float, longitude: float,
     except Exception as e:
         return f"{output_msg}\n(Could not generate human-friendly message: {e})"
 
+def predict_area(date: str, startTime: str, endTime: str, southWestLat: float, southWestLng: float, northEastLat: float, northEastLng: float, model_dir: str = "."):
+    """
+    Predicts crime categories for a rectangular area based on date, time, and bounding box coordinates.
+
+    Args:
+        start_time (str): Start Time in MM-DD format.
+        end_time (str): End Time in HH:MM format.
+        southWestLat (float): Southwest latitude coordinate.
+        southWestLng (float): Southwest longitude coordinate.
+        northEastLat (float): Northeast latitude coordinate.
+        northEastLng (float): Northeast longitude coordinate.
+        model_dir (str): Directory containing the model and label encoder.
+
+    Returns:
+        str: A human-readable prediction message for the area.
+    """
+    start = int(startTime.split(":")[0])
+    end = int(endTime.split(":")[0])
+    if end - start > 12:
+       raise Exception("Time range should not exceed 12 hours.")
+
+    resolution_horizontal = 8
+    resolution_vertical = 6
+    steps_lat = (northEastLat - southWestLat) / resolution_vertical
+    steps_lng = (northEastLng - southWestLng) / resolution_horizontal
+    model = XGBoostPredictionModel()
+
+    positions = []
+    for i in range(1, resolution_vertical - 1):
+        for j in range(1, resolution_horizontal - 1):
+            lat = southWestLat + steps_lat * i
+            lng = southWestLng + steps_lng * j
+            positions.append((lat, lng))
+
+    predictions = []
+    for time_val in range(start, end + 1):
+        for position in positions:
+            lat = position[0]
+            lng = position[1]
+            category, score = model.predict(date, str(time_val) + ":00", lat, lng)
+            if score < 0.6:
+                continue
+            if category != "no-incident":
+                predictions.append(
+                    {
+                        "time": time_val,
+                        "lat": lat,
+                        "lng": lng,
+                        "incident_probability": 100 * score,
+                        "category": category,
+                    }
+                )
+    
+    # create human friendly message for the predictions list
+    if len(predictions) == 0:
+        return f"No significant incidents predicted in the area ({southWestLat}, {southWestLng}) to ({northEastLat}, {northEastLng}) on {date} between {startTime} and {endTime}."
+    else:
+        messages = []
+        for pred in predictions:
+            datetime_str = f"{date} {pred['time']:02d}:00"
+            try:
+                human_friendly_message = generate_message(
+                    prediction_label=pred["category"],
+                    probability=pred["incident_probability"] / 100.0,
+                    lat=pred["lat"],
+                    lng=pred["lng"],
+                    datetime_str=datetime_str,
+                )
+                messages.append(human_friendly_message)
+            except Exception as e:
+                messages.append(f"Predicted incident at {datetime_str} (lat: {pred['lat']}, lng: {pred['lng']}): {pred['category']} with estimated confidence {pred['incident_probability']:.2f}%\n(Could not generate human-friendly message: {e})")
+        return "\n\n".join(messages)
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:

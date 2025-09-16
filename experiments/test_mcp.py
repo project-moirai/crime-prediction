@@ -205,7 +205,60 @@ def test_mcp_server(date="12-01", time_str="12:00", latitude=46, longitude=5.5):
                     print("Raw prediction response:")
                     print(json.dumps(predict_response, indent=2))
 
-            print("\n✓ MCP server is working correctly!")
+            print("\n✓ MCP server Single prediction is working correctly!")
+        elif "error" not in predict_response:
+            print("✓ MCP server responded successfully (check response format)")
+            print(json.dumps(predict_response, indent=2))
+            return True
+        else:
+            print("✗ MCP server returned an error")
+            print(json.dumps(predict_response, indent=2))
+            return False
+        
+        # Call predict_crime tool (area version)
+        print("\nMaking an area crime prediction...")
+        predict_request = {
+            "jsonrpc": "2.0", 
+            "id": 3,
+            "method": "tools/call",
+            "params": {
+                "name": "predict_crime_area",
+                "arguments": {
+                    "date": date,
+                    "startTime": time_str,
+                    "endTime": time_str,
+                    "southWestLat": latitude,
+                    "southWestLng": longitude,
+                    "northEastLat": latitude,
+                    "northEastLng": longitude
+                }
+            }
+        }
+        
+        predict_response = send_request_and_get_response(predict_request, "prediction")
+        if not predict_response:
+            return False
+            
+        print("✓ Prediction Area response:")
+        # print(json.dumps(predict_response, indent=2))
+        
+        # Check if we got a valid prediction result
+        if "result" in predict_response:
+            result = predict_response["result"]
+            
+            # Try to extract and display the human-readable prediction
+            if "structuredContent" in result and "content" in result["structuredContent"]:
+                try:
+                    human_readable_text = result["structuredContent"]["content"][0]["text"]
+                    print("\n--- Human-Readable Prediction (area) ---")
+                    print(human_readable_text)
+                    print("---------------------------------")
+                except (KeyError, IndexError, TypeError) as e:
+                    print(f"\nCould not parse human-readable prediction: {e}")
+                    print("Raw prediction response:")
+                    print(json.dumps(predict_response, indent=2))
+
+            print("\n✓ MCP server Area prediction is working correctly!")
             return True
         elif "error" not in predict_response:
             print("✓ MCP server responded successfully (check response format)")
