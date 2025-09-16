@@ -11,3 +11,4 @@ openapi-schema-validator==0.6.3
 openapi-spec-validator==0.7.2
 azure-identity>=1.12.0
 python-dotenv
+mcp>=1.0.0
