@@ -41,10 +41,6 @@ Data for each country was collected from the following sources:
 | at         | www.polizei.gv.at/{county}/presse |
 | de         | www.presseportal.de               |
 
-## Methodologies & models
-
-The most promising models and methodologies used will be described here in more detail after the hackathon.
-
 ## Contributors
 
 We'd like to thank the following contributors, without whom this project would not have been possible:
