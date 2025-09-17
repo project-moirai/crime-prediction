@@ -1,7 +1,8 @@
 label_encoder.pkl
 crime_prediction_model.json
 train_old.py
-
+.env
+*.pyc
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
