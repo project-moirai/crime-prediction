@@ -1568,11 +1568,11 @@
             const monthContainer = document.querySelector('.dropdown-container:first-of-type');
             const dayContainer = document.querySelector('.dropdown-container:last-of-type');
 
-            if (!monthContainer.contains(event.target) && isMonthDropdownOpen) {
+            if (monthContainer != null && !monthContainer.contains(event.target) && isMonthDropdownOpen) {
                 toggleDropdown('month');
             }
 
-            if (!dayContainer.contains(event.target) && isDayDropdownOpen) {
+            if (dayContainer != null && !dayContainer.contains(event.target) && isDayDropdownOpen) {
                 toggleDropdown('day');
             }
         });
@@ -2637,11 +2637,8 @@
         }
 
 
-        // Optimized hexagon grid with virtual rendering
         function createHexagonGrid() {
             if (isUpdating) return;
-
-            console.log("Create optimized grid");
             const svg = d3.select(hexagonLayer.getPane()).select('svg');
             const g = svg.select('g');
 
