@@ -8,7 +8,9 @@ import sys
 from pathlib import Path
 import argparse
 
-def test_mcp_server(date="12-01", time_str="12:00", latitude=46, longitude=5.5):
+def test_mcp_server(date="12-01", time_str="12:00", latitude=46, longitude=5.5,
+                    start_time="11:00", end_time="13:00",
+                    sw_lat=45.9, sw_lng=5.4, ne_lat=46.1, ne_lng=5.6):
     """Test the MCP server by sending sample requests."""
     server_path = Path(__file__).parent / "mcp_server.py"
     
@@ -225,12 +227,12 @@ def test_mcp_server(date="12-01", time_str="12:00", latitude=46, longitude=5.5):
                 "name": "predict_crime_area",
                 "arguments": {
                     "date": date,
-                    "startTime": time_str,
-                    "endTime": time_str,
-                    "southWestLat": latitude,
-                    "southWestLng": longitude,
-                    "northEastLat": latitude,
-                    "northEastLng": longitude
+                    "startTime": start_time,
+                    "endTime": end_time,
+                    "southWestLat": sw_lat,
+                    "southWestLng": sw_lng,
+                    "northEastLat": ne_lat,
+                    "northEastLng": ne_lng
                 }
             }
         }
@@ -303,6 +305,13 @@ def main():
     parser.add_argument("--time", default="12:00", help="Time in HH:MM format")
     parser.add_argument("--latitude", type=float, default=46, help="Latitude")
     parser.add_argument("--longitude", type=float, default=5.5, help="Longitude")
+    # Area prediction arguments
+    parser.add_argument("--start-time", default="11:00", help="Area prediction start time (HH:MM)")
+    parser.add_argument("--end-time", default="13:00", help="Area prediction end time (HH:MM)")
+    parser.add_argument("--sw-lat", type=float, default=45.9, help="South-west corner latitude for area prediction")
+    parser.add_argument("--sw-lng", type=float, default=5.4, help="South-west corner longitude for area prediction")
+    parser.add_argument("--ne-lat", type=float, default=46.1, help="North-east corner latitude for area prediction")
+    parser.add_argument("--ne-lng", type=float, default=5.6, help="North-east corner longitude for area prediction")
     args = parser.parse_args()
 
     mcp_ok = test_mcp_server(
@@ -310,6 +319,8 @@ def main():
         time_str=args.time,
         latitude=args.latitude,
         longitude=args.longitude
+        , start_time=args.start_time, end_time=args.end_time,
+        sw_lat=args.sw_lat, sw_lng=args.sw_lng, ne_lat=args.ne_lat, ne_lng=args.ne_lng
     )
 
 if __name__ == "__main__":

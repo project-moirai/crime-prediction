@@ -45,6 +45,28 @@ To test the server, you can run the `test_mcp.py` script. This script sends a sa
 python test_mcp.py
 ```
 
+The `test_mcp.py` script also supports area prediction parameters (bounding box + time window). These new CLI options allow testing the `predict_crime_area` tool.
+
+Additional CLI options:
+- `--start-time`: Start time for area prediction (HH:MM). Default: `11:00`
+- `--end-time`: End time for area prediction (HH:MM). Default: `13:00`
+- `--sw-lat`: South-west corner latitude for the area. Default: `45.9`
+- `--sw-lng`: South-west corner longitude for the area. Default: `5.4`
+- `--ne-lat`: North-east corner latitude for the area. Default: `46.1`
+- `--ne-lng`: North-east corner longitude for the area. Default: `5.6`
+
+Example (single-point prediction):
+
+```bash
+python test_mcp.py --date 12-01 --time 12:00 --latitude 46 --longitude 5.5
+```
+
+Example (area prediction):
+
+```bash
+python test_mcp.py --date 12-01 --time 12:00 --start-time 10:00 --end-time 14:00 --sw-lat 45.7 --sw-lng 5.2 --ne-lat 46.3 --ne-lng 5.8
+```
+
 ## Available Tools
 
 ### predict_crime
