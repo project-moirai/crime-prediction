@@ -48,4 +48,6 @@ The most promising models and methodologies used will be described here in more 
 ## Contributors
 
 We'd like to thank the following contributors, without whom this project would not have been possible:
+- Christian Vorhemus
 - Matteo Corvaro
+- Jelena Simic
