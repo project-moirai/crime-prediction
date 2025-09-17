@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from imblearn.over_sampling import SMOTE
+from io import StringIO
 
 from sklearn.metrics import (
     accuracy_score,
@@ -12,9 +13,15 @@ import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-# Load data
-file_path = "../data/data-gpt4o-v2.jsonl"
-df = pd.read_json(file_path, lines=True)
+import json
+
+file_path = "./data/data-gpt4o-v2.jsonl"
+
+with open(file_path, "r") as f:
+    data = [json.loads(line) for line in f]
+
+df = pd.DataFrame(data)
+print(df.head())
 
 # Remove rows with empty values
 df = df.dropna(subset=["date", "time"])
@@ -40,30 +47,28 @@ print(df.head())
 df = df.dropna(subset=["datetime"])
 
 # Feature engineering
-df.loc[:, "datetime"] = pd.to_datetime("2021-" + df["date"] + " " + df["time"])
+df["datetime"] = pd.to_datetime("2021-" + df["date"] + " " + df["time"])
 
-df.loc[:, "month"] = df["datetime"].dt.month
-df.loc[:, "day"] = df["datetime"].dt.day
-df.loc[:, "hour"] = df["datetime"].dt.hour
-df.loc[:, "minute"] = df["datetime"].dt.minute
-df.loc[:, "dow"] = df["datetime"].dt.weekday  # 0 = Monday, 1 = Tuesday etc.
+df["month"] = df["datetime"].dt.month
+df["day"] = df["datetime"].dt.day
+df["hour"] = df["datetime"].dt.hour
+df["minute"] = df["datetime"].dt.minute
+df["dow"] = df["datetime"].dt.weekday  # 0 = Monday, 1 = Tuesday etc.
 
 # Cyclical encoding for time features
-df.loc[:, "hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
-df.loc[:, "hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
-df.loc[:, "dow_sin"] = np.sin(2 * np.pi * df["dow"] / 7)
-df.loc[:, "dow_cos"] = np.cos(2 * np.pi * df["dow"] / 7)
-df.loc[:, "month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
-df.loc[:, "month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
+df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
+df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
+df["dow_sin"] = np.sin(2 * np.pi * df["dow"] / 7)
+df["dow_cos"] = np.cos(2 * np.pi * df["dow"] / 7)
+df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
+df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
 
 # Change precision of location
-df.loc[:, "lat"] = df["lat"].round(2)
-df.loc[:, "lng"] = df["lng"].round(2)
+df["lat"] = df["lat"].round(2)
+df["lng"] = df["lng"].round(2)
 
 # We only take one class per row (multiclass classification) and ignore the rest here
-df.loc[:, "category"] = df["category"].apply(
-    lambda x: x[0] if isinstance(x, list) else x
-)
+df["category"] = df["category"].apply(lambda x: x[0] if isinstance(x, list) else x)
 
 # We drop classes that appear extremely rarely in the dataset
 categories_to_drop = [

@@ -5,18 +5,34 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
-from ..interfaces import PredictionModel
+from interfaces import PredictionModel
 
 
 class XGBoostPredictionModel(PredictionModel):
     def __init__(self):
         self.le = LabelEncoder()
 
-        label_path = "./models/xgboost/label_encoder.pkl"
+        # Try to find label_encoder.pkl in current working directory, then in script directory
+        label_path = "label_encoder.pkl"
+        if not os.path.exists(label_path):
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            alt_label_path = os.path.join(script_dir, "label_encoder.pkl")
+            if os.path.exists(alt_label_path):
+                label_path = alt_label_path
+            else:
+                raise Exception(f"File {label_path} was not found. Did you run train.py? Also ensure the file is in the correct location, working directory is {os.getcwd()}")
         with open(label_path, "rb") as f:
             self.le = pickle.load(f)
 
-        model_path = "./models/xgboost/crime_prediction_model.json"
+        # Try to find crime_prediction_model.json in current working directory, then in script directory
+        model_path = "crime_prediction_model.json"
+        if not os.path.exists(model_path):
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            alt_model_path = os.path.join(script_dir, "crime_prediction_model.json")
+            if os.path.exists(alt_model_path):
+                model_path = alt_model_path
+            else:
+                raise Exception(f"File {model_path} was not found. Did you run train.py? Also ensure the file is in the correct location, working directory is {os.getcwd()}")
         self.model_category = xgb.XGBClassifier()
         self.model_category.load_model(model_path)
 
