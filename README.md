@@ -44,3 +44,10 @@ Data for each country was collected from the following sources:
 ## Methodologies & models
 
 The most promising models and methodologies used will be described here in more detail after the hackathon.
+
+## Contributors
+
+We'd like to thank the following contributors, without whom this project would not have been possible:
+- Christian Vorhemus
+- Matteo Corvaro
+- Jelena Simic

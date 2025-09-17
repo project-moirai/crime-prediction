@@ -1,0 +1,10 @@
+fastapi
+pydantic
+uvicorn
+azure-identity
+azure-core
+aiohttp
+pandas
+numpy
+xgboost
+scikit-learn

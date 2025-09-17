@@ -412,6 +412,7 @@
             text-align: center;
             font-weight: 600;
             color: var(--text-primary);
+            margin-top: 10px;
             margin-bottom: 10px;
         }
 
@@ -506,7 +507,7 @@
         }
 
         .coordinate-display {
-            background: var(--info-bg);
+            background: var(--card-bg);
             padding: 10px;
             border-radius: 6px;
             margin-top: 10px;
@@ -543,6 +544,19 @@
             position: absolute;
             bottom: 20px;
             right: 3px;
+            background: var(--legend-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 10px;
+            border-radius: 3px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--legend-border);
+            z-index: 900;
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .legend-button {
             background: var(--legend-bg);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
@@ -954,6 +968,190 @@
             color: #2c3e50;
             border: 2px solid #e9ecef;
         }
+
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+            width: 140px;
+        }
+
+        .dropdown-button {
+            position: relative;
+            background: var(--legend-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 10px 15px;
+            border-radius: 3px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border: 1px solid var(--legend-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dropdown-button:hover {
+            background: var(--hover-bg);
+            box-shadow: 0 6px 20px var(--shadow-color);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-button.active {
+            box-shadow: 0 6px 20px var(--dropdown-shadow);
+            background: var(--dropdown-bg);
+        }
+
+        .dropdown-arrow {
+            margin-left: 8px;
+            font-size: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-button.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            bottom: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 3px;
+            box-shadow: 0 8px 25px var(--dropdown-shadow);
+            border: 1px solid var(--legend-border);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .dropdown-item.selected {
+            background: var(--hover-bg);
+            font-weight: 600;
+        }
+
+        /* Scrollbar styling for dropdown */
+        .dropdown-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .dropdown-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+        }
+
+        .prediction-text-window {
+            background: var(--bg-primary);
+            padding: 6px;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    #EE565A 20%,
+                    #864DCC 40%,
+                    #276BD2 60%,
+                    #3BB2B8 80%,
+                    transparent 100%);
+            opacity: 0;
+            transform: scaleX(0.8);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .prediction-text-window.loading .gradient-overlay {
+            animation: pulseGradient 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGradient {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scaleX(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleX(1.1);
+            }
+        }
+
+        .circle-label div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* centers horizontally and vertically */
+            font-weight: bold;
+            /* bold text */
+            color: white;
+            white-space: nowrap;
+            /* prevent wrapping */
+            pointer-events: none;
+            /* click passes through to map */
+        }
+
+        .leaflet-control {
+            background-color: var(--bg-primary) !important;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+        }
+
+        .leaflet-control-attribution a {
+            color: var(--text-primary) !important;
+            text-decoration: none;
+        }
+
+        #closePredictionWindow {
+            color: var(--text-primary)
+        }
     </style>
 </head>
 
@@ -969,6 +1167,86 @@
         <div class="legend" style="top:10px;right:10px;height:45px;cursor:pointer" onclick="toggleTheme()">
             <img src="images/theme-icon.svg" alt="Theme icon" width="26" height="26">
         </div>
+
+        <div class="legend" id="predictButtonLegend"
+            style="bottom:10px;left:360px;height:40px;cursor:pointer;width:130px;display:none;"
+            onclick="togglePrediction()">
+            <h4>Predict incidents</h4>
+        </div>
+
+        <div class="legend" id="predictionWindow"
+            style="padding-top:3px;bottom:10px;left:360px;right:0;max-width:400px;display:none;position:fixed;z-index:999;animation:slideUp 0.5s forwards;">
+            <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <h4 style="text-align:left;margin-top:8px;">Predict incidents</h4>
+                    <button id="closePredictionWindow"
+                        style="background:none;border:none;font-size:16px;line-height:1;cursor:pointer;padding:0 3px 0 8px;"
+                        onclick="closePredictionWindow()">&#10005;</button>
+                </div>
+                <div style="margin-bottom:18px;">
+                    <div class="time-container">
+                        <div id="predictionSlider"></div>
+                    </div>
+
+                    <div class="time-display" id="timeDisplayPrediction">08:00 - 16:00</div>
+                </div>
+
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:0px;">
+                    <div class="dropdown-container">
+                        <div class="dropdown-button" onclick="toggleDropdown('month')">
+                            <span id="monthSelected">Select Month</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-menu" id="monthDropdown">
+                            <div class="dropdown-item" onclick="selectOption('month', 'January', 1)">January</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'February', 2)">February</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'March', 3)">March</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'April', 4)">April</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'May', 5)">May</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'June', 6)">June</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'July', 7)">July</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'August', 8)">August</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'September', 9)">September</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'October', 10)">October</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'November', 11)">November</div>
+                            <div class="dropdown-item" onclick="selectOption('month', 'December', 12)">December</div>
+                        </div>
+                    </div>
+
+                    <!-- Day Dropdown -->
+                    <div class="dropdown-container">
+                        <div class="dropdown-button" onclick="toggleDropdown('day')">
+                            <span id="daySelected">Select Day</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-menu" id="dayDropdown">
+                            <!-- Days will be populated dynamically -->
+                        </div>
+                    </div>
+                    <div class="legend-button" style="height:40px;cursor:pointer;" onclick="predict()">
+                        <h4>OK</h4>
+                    </div>
+                </div>
+                <div class="prediction-text-window" id="predictionTextContainer" style="display:none;margin-top:10px;">
+                    <div class="gradient-overlay"></div>
+                    <div id="predictionText"></div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        </style>
 
         <!-- Overlay for mobile -->
         <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
@@ -1057,6 +1335,287 @@
         crossorigin="" />
 
     <script>
+        let predictionArray;
+        const predictionUrl = "http://localhost:8080/predictText";
+
+        async function predict() {
+            removeCircles();
+            const elementContainer = document.getElementById('predictionTextContainer');
+            elementContainer.style.display = "block";
+            const element = document.getElementById('predictionText');
+            document.getElementById('predictionText').innerHTML = ""
+            elementContainer.classList.toggle('loading');
+
+            const currentView = map.getBounds();
+            southWestLat = currentView._southWest.lat;
+            southWestLng = currentView._southWest.lng;
+            northEastLat = currentView._northEast.lat;
+            northEastLng = currentView._northEast.lng;
+            const [startHour, endHour] = predictionSlider.getSelectedRange();
+
+            const query = new URLSearchParams({
+                date: selectedMonth + "-" + selectedDay,
+                startTime: startHour + ":00",
+                endTime: endHour + ":00",
+                southWestLat: southWestLat,
+                southWestLng: southWestLng,
+                northEastLat: northEastLat,
+                northEastLng: northEastLng,
+            });
+
+            const url = `${predictionUrl}?${query.toString()}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            // Get a reader for the response body
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let first = true;
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (first) {
+                        elementContainer.classList.toggle('loading');
+                        first = false;
+                    }
+                    if (done) {
+                        break;
+                    }
+                    const chunk = decoder.decode(value, { stream: true });
+                    // console.log("Got token:", chunk);
+                    const match = chunk.match(/<PREDICTIONS>([\s\S]*?)<\/PREDICTIONS>/);
+                    if (match) {
+                        const jsonString = match[1].trim();
+                        try {
+                            predictionArray = JSON.parse(jsonString);
+                            console.log("Parsed object:", predictionArray);
+                            predictionArray.forEach(element => {
+                                if (element["incident_probability"] > 70) {
+                                    drawCircle(element["lat"], element["lng"], element["category"]);
+                                }
+                            });
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    } else {
+                        element.innerHTML += chunk;
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+
+        }
+
+        let selectedMonth = null;
+        let selectedDay = null;
+        let isMonthDropdownOpen = false;
+        let isDayDropdownOpen = false;
+
+        function initializeDayDropdown() {
+            const dayDropdown = document.getElementById('dayDropdown');
+            for (let i = 1; i <= 31; i++) {
+                const dayItem = document.createElement('div');
+                dayItem.className = 'dropdown-item';
+                dayItem.textContent = i;
+                dayItem.onclick = () => selectOption('day', i.toString(), i);
+                dayDropdown.appendChild(dayItem);
+            }
+        }
+
+        function initializeCurrentDate() {
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
+            const currentDay = now.getDate();
+
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            // Set current month
+            selectedMonth = currentMonth;
+            document.getElementById('monthSelected').textContent = monthNames[currentMonth - 1];
+
+            // Set current day
+            selectedDay = currentDay;
+            document.getElementById('daySelected').textContent = currentDay.toString();
+
+            // Update selected styling for month
+            const monthItems = document.querySelectorAll('#monthDropdown .dropdown-item');
+            monthItems[currentMonth - 1].classList.add('selected');
+
+            // Update day dropdown and set selected styling
+            updateDayDropdown();
+            const dayItems = document.querySelectorAll('#dayDropdown .dropdown-item');
+            if (dayItems[currentDay - 1]) {
+                dayItems[currentDay - 1].classList.add('selected');
+            }
+        }
+
+        function toggleDropdown(type) {
+            if (type === 'month') {
+                const dropdown = document.getElementById('monthDropdown');
+                const button = dropdown.previousElementSibling;
+
+                if (isMonthDropdownOpen) {
+                    dropdown.classList.remove('show');
+                    button.classList.remove('active');
+                    isMonthDropdownOpen = false;
+                } else {
+                    // Close day dropdown if open
+                    if (isDayDropdownOpen) {
+                        toggleDropdown('day');
+                    }
+
+                    dropdown.classList.add('show');
+                    button.classList.add('active');
+                    isMonthDropdownOpen = true;
+                }
+            } else if (type === 'day') {
+                const dropdown = document.getElementById('dayDropdown');
+                const button = dropdown.previousElementSibling;
+
+                if (isDayDropdownOpen) {
+                    dropdown.classList.remove('show');
+                    button.classList.remove('active');
+                    isDayDropdownOpen = false;
+                } else {
+                    // Close month dropdown if open
+                    if (isMonthDropdownOpen) {
+                        toggleDropdown('month');
+                    }
+
+                    dropdown.classList.add('show');
+                    button.classList.add('active');
+                    isDayDropdownOpen = true;
+                }
+            }
+        }
+
+        function selectOption(type, displayValue, value) {
+            if (type === 'month') {
+                selectedMonth = value;
+                document.getElementById('monthSelected').textContent = displayValue;
+
+                // Update selected styling
+                document.querySelectorAll('#monthDropdown .dropdown-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                event.target.classList.add('selected');
+
+                // Update day dropdown based on selected month
+                updateDayDropdown();
+
+                // Close dropdown
+                toggleDropdown('month');
+
+            } else if (type === 'day') {
+                selectedDay = value;
+                document.getElementById('daySelected').textContent = displayValue;
+
+                // Update selected styling
+                document.querySelectorAll('#dayDropdown .dropdown-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                event.target.classList.add('selected');
+
+                // Close dropdown
+                toggleDropdown('day');
+            }
+        }
+
+        function updateDayDropdown() {
+            const dayDropdown = document.getElementById('dayDropdown');
+            const dayItems = dayDropdown.querySelectorAll('.dropdown-item');
+
+            let maxDays = 31;
+
+            if (selectedMonth) {
+                // Months with 30 days
+                if ([4, 6, 9, 11].includes(selectedMonth)) {
+                    maxDays = 30;
+                }
+                // February
+                else if (selectedMonth === 2) {
+                    maxDays = 29; // Simplified - not checking for leap years
+                }
+            }
+
+            // Show/hide day options based on selected month
+            dayItems.forEach((item, index) => {
+                const dayNumber = index + 1;
+                if (dayNumber <= maxDays) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                    // Reset day selection if it's now invalid
+                    if (selectedDay > maxDays) {
+                        selectedDay = null;
+                        document.getElementById('daySelected').textContent = 'Select Day';
+                        item.classList.remove('selected');
+                    }
+                }
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (event) {
+            const monthContainer = document.querySelector('.dropdown-container:first-of-type');
+            const dayContainer = document.querySelector('.dropdown-container:last-of-type');
+
+            if (monthContainer != null && !monthContainer.contains(event.target) && isMonthDropdownOpen) {
+                toggleDropdown('month');
+            }
+
+            if (dayContainer != null && !dayContainer.contains(event.target) && isDayDropdownOpen) {
+                toggleDropdown('day');
+            }
+        });
+
+        // Initialize the day dropdown on page load
+        initializeDayDropdown();
+        initializeCurrentDate();
+
+        function togglePrediction() {
+            const predictBtn = document.getElementById('predictButtonLegend');
+            const predictionWin = document.getElementById('predictionWindow');
+            if (predictionWin.style.display === 'none' || predictionWin.style.display === '') {
+                predictBtn.style.display = 'none';
+                predictionWin.style.display = 'block';
+            } else {
+                predictBtn.style.display = 'block';
+                predictionWin.style.display = 'none';
+            }
+        }
+
+        function closePredictionWindow() {
+            removeCircles();
+            document.getElementById('predictionTextContainer').style.display = 'none';
+            document.getElementById('predictionWindow').style.display = 'none';
+            togglepredictButton();
+            document.getElementById('predictionText').innerHTML = "";
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const timeRange = document.getElementById('predictionTimeRange');
+            const timeLabel = document.getElementById('predictionTimeLabel');
+            if (timeRange && timeLabel) {
+                timeRange.addEventListener('input', function () {
+                    let hour = String(this.value).padStart(2, '0');
+                    timeLabel.textContent = hour + ':00';
+                });
+            }
+        });
+
+        function predictIncidents() {
+            // Implement prediction logic here
+            alert('Prediction requested for time ' + document.getElementById('predictionTimeLabel').textContent + ', month ' + document.getElementById('predictionMonth').value + ', day ' + document.getElementById('predictionDay').value);
+        }
         let map;
         let layer = null;
         let hexagonSize = 15; // km
@@ -1068,6 +1627,7 @@
         let monthStats = {};
         let allMonthSelected = true;
         let histogramSlider;
+        let predictionSlider;
         let overrruleAutoTheme = false;
 
         // Performance optimization variables
@@ -1077,6 +1637,36 @@
         let monthLookup = {}; // Fast month lookup
         let isUpdating = false; // Prevent multiple simultaneous updates
         let pendingUpdateFrame = null;
+
+        const circles = [];
+        const circleLabels = [];
+
+        function drawCircle(lat, lng, label) {
+            const circle = L.circle([lat, lng], {
+                radius: 10000, // in meters
+                color: "#864DCC",
+                weight: 2,
+                fillColor: "#864DCC",
+                fillOpacity: 0.4
+            }).addTo(map);
+            const circleLabel = L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: "circle-label",
+                    html: "<div>" + label + "</div>",
+                    iconSize: [0, 0],    // auto-size, avoids shifting
+                    iconAnchor: [0, 0],  // anchor in the middle
+                })
+            }).addTo(map);
+            circles.push(circle);
+            circleLabels.push(circleLabel);
+        }
+
+        function removeCircles() {
+            circles.forEach(c => map.removeLayer(c));
+            circleLabels.forEach(c => map.removeLayer(c));
+            circles.length = 0;
+            circleLabels.length = 0;
+        }
 
         // Throttle and debounce utilities
         function throttle(func, limit) {
@@ -2047,11 +2637,8 @@
         }
 
 
-        // Optimized hexagon grid with virtual rendering
         function createHexagonGrid() {
             if (isUpdating) return;
-
-            console.log("Create optimized grid");
             const svg = d3.select(hexagonLayer.getPane()).select('svg');
             const g = svg.select('g');
 
@@ -2136,6 +2723,13 @@
         // Handle automatic hexagon size adjustment
         function handleAutoHexagonSize() {
             const currentZoom = map.getZoom();
+
+            if (currentZoom >= 10) {
+                togglepredictButton("block");
+            } else {
+                togglepredictButton("none");
+            }
+
             const newSize = getHexagonSizeForZoom(currentZoom);
 
             if (newSize !== hexagonSize) {
@@ -2188,16 +2782,32 @@
             handleResize(); // Initial check
         }
 
+        function togglepredictButton(type) {
+            return;
+            if (window.innerWidth > 768) {
+                if (type == "block") {
+                    document.getElementById('predictButtonLegend').style.display = 'block';
+                } else {
+                    document.getElementById('predictButtonLegend').style.display = 'none';
+                }
+            } else {
+                document.getElementById('predictButtonLegend').style.display = 'none';
+            }
+        }
+
         function handleResize() {
             const sidebar = document.getElementById('sidebar');
             const menuToggle = document.getElementById('menuToggle');
             const overlay = document.getElementById('overlay');
+            togglepredictButton();
 
             if (window.innerWidth > 768) {
                 // Desktop view - ensure sidebar is visible and reset mobile styles
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
                 menuToggle.classList.remove('active');
+            } else {
+                document.getElementById('predictionWindow').style.display = 'none';
             }
         }
 
@@ -2352,14 +2962,16 @@
         }
 
         class HistogramSlider {
-            constructor(element, options = {}) {
+            constructor(element, timeDisplayElement, options = {}) {
                 this.element = element;
+                this.timeDisplayElement = timeDisplayElement;
                 this.options = {
                     data: this.generateSampleData(100, 24),
                     sliderRange: [0, 24],
                     selectedRange: [8, 16],
                     numberOfBins: 24,
                     height: 120,
+                    updateStats: false,
                     ...options
                 };
 
@@ -2388,7 +3000,7 @@
 
             init() {
                 const sliderHtml = this.createSliderHTML();
-                document.getElementById("histogramSlider").innerHTML = sliderHtml;
+                this.element.innerHTML = sliderHtml;
                 setTimeout(() => {
                     this.calculateBins();
                     this.render();
@@ -2533,7 +3145,7 @@
 
             attachEventListeners() {
                 const handles = this.element.querySelectorAll('.slider-handle');
-                const sliderRange = document.querySelector('.slider-range');
+                const sliderRange = this.element.querySelector('.slider-range');
 
                 handles.forEach(handle => {
                     handle.addEventListener('mousedown', this.handleMouseDown.bind(this));
@@ -2593,8 +3205,10 @@
 
                 this.updateRangeDisplay();
                 this.updateSliderRange();
-                this.updateStats();
-                this.updateHistogram();
+                if (this.options.updateStats) {
+                    this.updateStats();
+                    this.updateHistogram();
+                }
             }
 
             handleRangeMove(event) {
@@ -2616,13 +3230,15 @@
                     const leftPercent = this.valueToPercent(this.options.selectedRange[0]);
                     const rightPercent = this.valueToPercent(this.options.selectedRange[1]);
 
-                    document.getElementById('leftHandle').style.left = leftPercent + '%';
-                    document.getElementById('rightHandle').style.left = rightPercent + '%';
+                    this.element.querySelector('#leftHandle').style.left = leftPercent + '%';
+                    this.element.querySelector('#rightHandle').style.left = rightPercent + '%';
 
                     this.updateRangeDisplay();
                     this.updateSliderRange();
-                    this.updateStats();
-                    this.updateHistogram();
+                    if (this.options.updateStats) {
+                        this.updateStats();
+                        this.updateHistogram();
+                    }
                 }
             }
 
@@ -2661,7 +3277,7 @@
             }
 
             updateRangeDisplay() {
-                const rangeDisplay = document.getElementById('timeDisplay');
+                const rangeDisplay = this.timeDisplayElement;
                 const [min, max] = this.options.selectedRange;
                 let minute = "00";
                 if (max == 23) {
@@ -2705,6 +3321,18 @@
         document.addEventListener('DOMContentLoaded', function () {
             histogramSlider = new HistogramSlider(
                 document.getElementById('histogramSlider'),
+                document.getElementById('timeDisplay'),
+                {
+                    sliderRange: [0, 23],
+                    selectedRange: [8, 16],
+                    numberOfBins: 24,
+                    updateStats: true
+                }
+            );
+
+            predictionSlider = new HistogramSlider(
+                document.getElementById('predictionSlider'),
+                document.getElementById('timeDisplayPrediction'),
                 {
                     sliderRange: [0, 23],
                     selectedRange: [8, 16],
