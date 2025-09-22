@@ -47,3 +47,4 @@ We'd like to thank the following contributors, without whom this project would n
 - Christian Vorhemus
 - Matteo Corvaro
 - Jelena Simic
+- Tarun Jain
