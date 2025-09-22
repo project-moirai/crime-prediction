@@ -1287,6 +1287,12 @@
                 </div>
 
                 <div class="filter-section">
+                    <h3 onclick="toggleAllCountries()" style="cursor: pointer;">Countries</h3>
+                    <div class="category-grid" id="countriesFilter">
+                    </div>
+                </div>
+
+                <div class="filter-section">
                     <h3 onclick="toggleAllCategories()" style="cursor: pointer;">Categories</h3>
                     <div class="category-grid" id="categoryFilter">
                     </div>
@@ -1328,7 +1334,7 @@
         crossorigin=""></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="app/azure-maps-leaflet.min.js"></script>
-    <script src="app/data-gpt4o-v2.js"></script>
+    <script src="app/data-gpt4o-v3.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
         integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
@@ -1624,6 +1630,10 @@
         let crimeData = [];
         let filteredData = [];
         let allCategories = new Set();
+        const allCountries = [
+            { country: "Austria", code: "at" },
+            { country: "Germany", code: "de" }
+        ];
         let selectedMonths = new Set(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']);
         let monthStats = {};
         let allMonthSelected = true;
@@ -1703,6 +1713,7 @@
                 timeDisplay: document.getElementById('timeDisplay'),
                 monthChart: document.getElementById('monthChart'),
                 categoryFilter: document.getElementById('categoryFilter'),
+                countriesFilter: document.getElementById('countriesFilter'),
                 hexagonDetails: document.getElementById('hexagonDetails'),
                 barChart: document.getElementById('barChart'),
                 histogramTimes: document.getElementById('histogramTimes')
@@ -1715,6 +1726,7 @@
             timeBuckets = {};
             categoryLookup = {};
             monthLookup = {};
+            countryLookup = {};
 
             // Pre-calculate time buckets (0-23 hours)
             for (let hour = 0; hour < 24; hour++) {
@@ -1744,6 +1756,11 @@
                     const month = event.date.split('-')[0];
                     if (!monthLookup[month]) monthLookup[month] = [];
                     monthLookup[month].push(index);
+                }
+
+                if (event.country) {
+                    if (!countryLookup[event.country]) countryLookup[event.country] = [];
+                    countryLookup[event.country].push(index);
                 }
             });
         }
@@ -1775,6 +1792,7 @@
             isUpdating = true;
 
             const selectedCategories = Array.from(cachedDOMElements.categoryFilter.querySelectorAll('input:checked')).map(cb => cb.value);
+            const selectedCountries = Array.from(cachedDOMElements.countriesFilter.querySelectorAll('input:checked')).map(cb => cb.value);
             const [startHour, endHour] = histogramSlider.getSelectedRange();
 
             // Use Set for faster lookups
@@ -1806,6 +1824,26 @@
                 }
             }
             // If all categories are selected, no filtering needed (keep all validIndices)
+
+            if (selectedCountries.length === 0) {
+                // If no countries are selected, show no events
+                validIndices.clear();
+            } else if (selectedCountries.length < allCountries.length) {
+                // If some (but not all) countries are selected
+                const countryValidIndices = new Set();
+                selectedCountries.forEach(code => {
+                    if (countryLookup[code]) {
+                        countryLookup[code].forEach(index => countryValidIndices.add(index));
+                    }
+                });
+
+                // Intersect with existing valid indices
+                for (const index of validIndices) {
+                    if (!countryValidIndices.has(index)) {
+                        validIndices.delete(index);
+                    }
+                }
+            }
 
             // Apply month filter using lookup table
             if (selectedMonths.size === 0) {
@@ -2068,6 +2106,7 @@
             cacheDOMElements();
 
             populateCategoryFilter();
+            populateCountriesFilter();
             createMonthChart();
             filteredData = [...crimeData];
             updateEventCounts();
@@ -2100,6 +2139,23 @@
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function populateCountriesFilter() {
+            const container = document.getElementById('countriesFilter');
+            container.innerHTML = '';
+
+            allCountries
+                .sort((a, b) => a.country.localeCompare(b.country)) // sort by country name
+                .forEach(({ country, code }) => {
+                    const div = document.createElement('div');
+                    div.className = 'category-item';
+                    div.innerHTML = `
+                <input type="checkbox" id="cou-${code}" value="${code}" checked onchange="onCategoryFilterChange()">
+                <label class="checkbox-label" for="cou-${code}">${country}</label>
+            `;
+                    container.appendChild(div);
+                });
         }
 
         // Handle category filter changes with optimization
@@ -2137,13 +2193,37 @@
             onCategoryFilterChange();
         }
 
+        function toggleAllCountries() {
+            const checkboxes = cachedDOMElements.countriesFilter.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = cachedDOMElements.countriesFilter.querySelectorAll('input[type="checkbox"]:checked');
+
+            // If all or most categories are selected, deselect all
+            // If none or few categories are selected, select all
+            const shouldSelectAll = checkedBoxes.length < (checkboxes.length / 2);
+
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = shouldSelectAll;
+            });
+
+            // Trigger the filter update
+            onCategoryFilterChange();
+        }
+
         // Optimized calculation of month statistics using lookup tables
         function calculateFilteredMonthStats() {
-            const selectedCategories = Array.from(cachedDOMElements.categoryFilter.querySelectorAll('input:checked')).map(cb => cb.value);
+            const selectedCategories = Array.from(
+                cachedDOMElements.categoryFilter.querySelectorAll('input:checked')
+            ).map(cb => cb.value);
+
+            const selectedCountries = Array.from(
+                cachedDOMElements.countriesFilter.querySelectorAll('input:checked')
+            ).map(cb => cb.value);
+
             const [startHour, endHour] = histogramSlider.getSelectedRange();
 
             const filteredMonthStats = {};
-            const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+            const months = ['01', '02', '03', '04', '05', '06',
+                '07', '08', '09', '10', '11', '12'];
             months.forEach(month => filteredMonthStats[month] = 0);
 
             // Use pre-calculated indices for faster filtering
@@ -2154,12 +2234,10 @@
                 validIndices.add(i);
             }
 
-            // Apply category filter using lookup table
+            // --- Category filter ---
             if (selectedCategories.length === 0) {
-                // If no categories are selected, show no events
                 validIndices.clear();
             } else if (selectedCategories.length < allCategories.size) {
-                // If some (but not all) categories are selected, filter accordingly
                 const categoryValidIndices = new Set();
                 selectedCategories.forEach(cat => {
                     if (categoryLookup[cat]) {
@@ -2173,9 +2251,26 @@
                     }
                 }
             }
-            // If all categories are selected, no filtering needed (keep all validIndices)
 
-            // Apply time filter using lookup table
+            // --- Country filter ---
+            if (selectedCountries.length === 0) {
+                validIndices.clear();
+            } else if (selectedCountries.length < allCountries.length) {
+                const countryValidIndices = new Set();
+                selectedCountries.forEach(code => {
+                    if (countryLookup[code]) {
+                        countryLookup[code].forEach(index => countryValidIndices.add(index));
+                    }
+                });
+
+                for (const index of validIndices) {
+                    if (!countryValidIndices.has(index)) {
+                        validIndices.delete(index);
+                    }
+                }
+            }
+
+            // --- Time filter ---
             if (startHour !== 0 || endHour !== 23) {
                 const timeValidIndices = new Set();
                 for (let hour = startHour; hour <= endHour; hour++) {
@@ -2191,7 +2286,7 @@
                 }
             }
 
-            // Count events by month using valid indices
+            // --- Count events by month ---
             validIndices.forEach(index => {
                 const event = crimeData[index];
                 if (event.date) {
@@ -2204,6 +2299,7 @@
 
             return filteredMonthStats;
         }
+
 
         // Pre-created month bar elements for reuse
         let monthBarElements = [];
@@ -3013,29 +3109,51 @@
             calculateBins() {
                 const { data, numberOfBins, sliderRange } = this.options;
                 this.bins = new Array(numberOfBins).fill(0);
-                const selectedCategories = Array.from(cachedDOMElements.categoryFilter.querySelectorAll('input:checked')).map(cb => cb.value);
 
-                // If no categories are selected, all bins should be empty
-                if (selectedCategories.length === 0) {
+                const selectedCategories = Array.from(
+                    cachedDOMElements.categoryFilter.querySelectorAll('input:checked')
+                ).map(cb => cb.value);
+
+                const selectedCountries = Array.from(
+                    cachedDOMElements.countriesFilter.querySelectorAll('input:checked')
+                ).map(cb => cb.value);
+
+                // If no categories or no countries are selected, all bins should be empty
+                if (selectedCategories.length === 0 || selectedCountries.length === 0) {
                     return;
                 }
 
                 let filtered = crimeData.filter(event => {
+                    // Category filter
                     if (event.category && event.category.length > 0) {
-                        const hasMatchingCategory = event.category.some(cat => selectedCategories.includes(cat));
+                        const hasMatchingCategory = event.category.some(cat =>
+                            selectedCategories.includes(cat)
+                        );
                         if (!hasMatchingCategory) return false;
                     }
+
+                    // Country filter
+                    if (event.country) {
+                        // assuming event.country holds the country code ("at", "de", ...)
+                        if (!selectedCountries.includes(event.country)) return false;
+                    }
+
+                    // Month filter
                     if (selectedMonths.size > 0 && event.date) {
-                        const eventMonth = event.date.split('-')[0]; // Extract month from MM-DD format
+                        const eventMonth = event.date.split('-')[0]; // Extract month (MM from MM-DD format)
                         if (!selectedMonths.has(eventMonth)) return false;
                     }
+
                     return true;
                 });
 
                 filtered.forEach(event => {
-                    let hour = event.time.split(":")[0];
+                    let hour = parseInt(event.time.split(":")[0], 10);
                     if (!isNaN(hour)) {
-                        const binIndex = Math.max(0, Math.min(numberOfBins - 1, Math.floor(hour)));
+                        const binIndex = Math.max(
+                            0,
+                            Math.min(numberOfBins - 1, Math.floor(hour))
+                        );
                         this.bins[binIndex] += 1;
                     }
                 });
