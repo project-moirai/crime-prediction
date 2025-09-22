@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from imblearn.over_sampling import SMOTE
+import json
 
 from sklearn.metrics import (
     accuracy_score,
@@ -13,8 +14,30 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 # Load data
-file_path = "../data/data-gpt4o-v2.jsonl"
-df = pd.read_json(file_path, lines=True)
+#file_path = "../data/data-gpt4o-v2.jsonl"
+file_path = "../data/output.jsonl"
+#df = pd.read_json(file_path, lines=False)
+#data\output.jsonl
+
+data = []
+with open(file_path, 'r') as f:
+    for line in f:
+        try:
+            data.append(json.loads(line))
+        except json.JSONDecodeError:
+            print(f"Skipping invalid JSON line: {line.strip()}")
+
+df = pd.DataFrame(data)
+
+# Remove rows with empty values
+df = df.dropna(subset=["date", "time", "lat", "lng"])
+
+# Convert 'lat' and 'lng' to numeric, coercing errors to NaN
+df["lat"] = pd.to_numeric(df["lat"], errors="coerce")
+df["lng"] = pd.to_numeric(df["lng"], errors="coerce")
+
+# Drop rows where 'lat' or 'lng' could not be converted to numeric
+df = df.dropna(subset=["lat", "lng"])
 
 # Remove rows with empty values
 df = df.dropna(subset=["date", "time"])
@@ -27,9 +50,10 @@ df = df[
     & df["lng"].notna()
     & np.isfinite(df["lat"])
     & np.isfinite(df["lng"])
-]
+ ]
 df["datetime"] = pd.to_datetime(
-    "2021-" + df["date"] + " " + df["time"],
+    #"2021-" + df["date"] + " " + df["time"],
+    df["date"] + " " + df["time"],
     format="%Y-%m-%d %H:%M",
     errors="coerce",  # Invalid ones become NaT
 )
@@ -40,7 +64,8 @@ print(df.head())
 df = df.dropna(subset=["datetime"])
 
 # Feature engineering
-df["datetime"] = pd.to_datetime("2021-" + df["date"] + " " + df["time"])
+#df["datetime"] = pd.to_datetime("2021-" + df["date"] + " " + df["time"])
+df["datetime"] = pd.to_datetime(df["date"] + " " + df["time"])
 
 df["month"] = df["datetime"].dt.month
 df["day"] = df["datetime"].dt.day
@@ -85,6 +110,7 @@ features = [
 X = df_filtered[features]
 
 all_categories = df_filtered["category"].unique().tolist() + ["no-incident"]
+print(all_categories)
 le = LabelEncoder()
 le.fit(all_categories)
 
@@ -93,9 +119,32 @@ print(df_filtered["category"].value_counts().sort_values())
 
 y = le.transform(df_filtered["category"])
 
-# Oversample with SMOTE so we have a more balanced dataset
-sm = SMOTE(random_state=123)
-X_SMOTE, y_SMOTE = sm.fit_resample(X, y)
+# # Oversample with SMOTE so we have a more balanced dataset
+# sm = SMOTE(random_state=123)
+# X_SMOTE, y_SMOTE = sm.fit_resample(X, y)
+
+# Check if there's only one class in y
+if len(np.unique(y)) < 2:
+    print("Only one class in target variable. Skipping SMOTE.")
+    X_SMOTE, y_SMOTE = X, y  # Use original data
+else:
+    # Check class distribution
+    class_counts = pd.Series(y).value_counts()
+    print("Class distribution before SMOTE:")
+    print(class_counts)
+
+    # Determine a suitable value for n_neighbors
+    n_neighbors = min(class_counts.min() - 1, 5)  # Ensure n_neighbors is less than the smallest class count
+
+    if n_neighbors <= 0:
+        print("One of the classes has only one sample. Skipping SMOTE.")
+        X_SMOTE, y_SMOTE = X, y
+    else:
+        # Oversample with SMOTE so we have a more balanced dataset
+        sm = SMOTE(random_state=123, k_neighbors=n_neighbors)
+        X_SMOTE, y_SMOTE = sm.fit_resample(X, y)
+
+
 
 _, label_counts = np.unique(y_SMOTE, return_counts=True)
 
@@ -182,5 +231,10 @@ model_category.save_model("crime_prediction_model.json")
 y_pred = model_category.predict(X_test)
 print("Evaluation -----------------------")
 print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Get the unique labels present in y_test
+labels = np.unique(y_test)
+
+# Use the labels parameter in classification_report
 print("Classification Report:")
-print(classification_report(y_test, y_pred, target_names=le.classes_))
+print(classification_report(y_test, y_pred, target_names=le.inverse_transform(labels), labels=labels))
