@@ -42,7 +42,8 @@ model_category.load_model(model_path)
 df = pd.DataFrame([{"date": date_input, "time": time_input}])
 
 df["datetime"] = pd.to_datetime(
-    "2021-" + df["date"] + " " + df["time"],
+   # "2021-" + df["date"] + " " + df["time"],
+    df["date"] + " " + df["time"],
     format="%Y-%m-%d %H:%M",
     errors="coerce",
 )
