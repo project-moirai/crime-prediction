@@ -1343,7 +1343,7 @@
     <script>
         let predictionArray;
         // Note that prediction capabilities are currently disabled
-        const predictionUrl = "http://...";
+        const predictionUrl = "http://localhost:8080/predictText";
 
         async function predict() {
             removeCircles();
@@ -2024,12 +2024,28 @@
                 map.removeLayer(layer);
             }
 
-            layer = new L.TileLayer.AzureMaps({
-                authOptions: authOptions,
-                tilesetId: theme == "light" ? "microsoft.base.road" : "microsoft.base.darkgrey",
-                language: 'en-en'
-            });
+            // layer = new L.TileLayer.AzureMaps({
+            //     authOptions: authOptions,
+            //     tilesetId: theme == "light" ? "microsoft.base.road" : "microsoft.base.darkgrey",
+            //     language: 'en-en'
+            // });
+            // map.addLayer(layer);
+
+            if (theme == "light") {
+                layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'OpenStreetMap'
+                });
+            } else {
+                layer = L.tileLayer(
+                    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                    {
+                        attribution:
+                            'Carto'
+                    }
+                );
+            }
             map.addLayer(layer);
+
         }
 
         // Initialize the map with optimized event handlers
@@ -2880,7 +2896,6 @@
         }
 
         function togglepredictButton(type) {
-            return;
             if (window.innerWidth > 768) {
                 if (type == "block") {
                     document.getElementById('predictButtonLegend').style.display = 'block';
